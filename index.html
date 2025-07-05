@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PulseTrack — Fitness in Your Pocket</title>
+    <meta name="description" content="PulseTrack: Smart fitness & wellness tracking app. Track steps, heart rate, goals, and more. Download now!">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css"/>
+    <link rel="icon" href="https://img.icons8.com/color/48/000000/heart-with-pulse.png">
+    <style>
+        :root {
+            --primary: #6C63FF;
+            --accent: #FF6584;
+            --bg: #f8f9fb;
+            --dark-bg: #181a20;
+            --text: #22223b;
+            --text-light: #fff;
+            --card-bg: #fff;
+            --card-bg-dark: #23263a;
+            --shadow: 0 4px 24px rgba(108,99,255,0.08);
+            --radius: 1.5rem;
+            --transition: 0.3s cubic-bezier(.4,0,.2,1);
+        }
+        [data-theme="dark"] {
+            --bg: #181a20;
+            --text: #fff;
+            --card-bg: #23263a;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            scroll-behavior: smooth;
+        }
+        body {
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        /* Navbar */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 8px rgba(108,99,255,0.05);
+            transition: background var(--transition);
+        }
+        [data-theme="dark"] nav {
+            background: rgba(24,26,32,0.95);
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            font-weight: 800;
+            font-size: 1.5rem;
+            letter-spacing: -1px;
+            color: var(--primary);
+            gap: 0.5rem;
+        }
+        .logo img {
+            width: 32px;
+            height: 32px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 600;
+            transition: color var(--transition);
+            position: relative;
+        }
+        .nav-links a::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.2s;
+            position: absolute;
+            left: 0;
+            bottom: -2px;
+        }
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-left: 1rem;
+            transition: color var(--transition);
+        }
+        /* Hero Section */
+        .hero {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 90vh;
+            padding: 3rem 2rem 2rem 2rem;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(120deg, #f8f9fb 60%, #e0e7ff 100%);
+        }
+        [data-theme="dark"] .hero {
+            background: linear-gradient(120deg, #181a20 60%, #23263a 100%);
+        }
+        .hero-content {
+            flex: 1 1 350px;
+            z-index: 2;
+            max-width: 500px;
+        }
+        .hero-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            letter-spacing: -2px;
+        }
+        .hero-tagline {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.2rem;
+            color: var(--text);
+        }
+        .hero-desc {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            color: #555;
+        }
+        [data-theme="dark"] .hero-desc {
+            color: #ccc;
+        }
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .cta-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary);
+            color: #fff;
+            font-weight: 600;
+            border: none;
+            border-radius: 2rem;
+            padding: 0.9rem 1.7rem;
+            font-size: 1rem;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: background var(--transition), transform var(--transition);
+            text-decoration: none;
+        }
+        .cta-btn.secondary {
+            background: var(--accent);
+        }
+        .cta-btn:hover {
+            transform: translateY(-2px) scale(1.04);
+            filter: brightness(1.1);
+        }
+        .hero-bg-anim {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 60vw;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            overflow: visible;
+        }
+        .hero-mockup {
+            flex: 1 1 320px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            min-width: 300px;
+            min-height: 400px;
+        }
+        .phone-mockup {
+            width: 270px;
+            height: 540px;
+            background: linear-gradient(120deg, #fff 60%, #e0e7ff 100%);
+            border-radius: 2.5rem;
+            box-shadow: 0 8px 40px rgba(108,99,255,0.15);
+            border: 6px solid #e0e7ff;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        [data-theme="dark"] .phone-mockup {
+            background: linear-gradient(120deg, #23263a 60%, #181a20 100%);
+            border: 6px solid #23263a;
+        }
+        .phone-mockup img {
+            width: 90%;
+            border-radius: 1.5rem;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+            object-fit: cover;
+        }
+        /* Features Section */
+        .features {
+            padding: 4rem 2rem 2rem 2rem;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 2rem;
+            color: var(--primary);
+            text-align: center;
+        }
+        .feature-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            width: 100%;
+            max-width: 1100px;
+        }
+        .feature-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 2rem 1.5rem;
+            flex: 1 1 220px;
+            min-width: 220px;
+            max-width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform var(--transition), box-shadow var(--transition);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 8px 32px rgba(108,99,255,0.13);
+        }
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            transition: color var(--transition), transform var(--transition);
+        }
+        .feature-card:hover .feature-icon {
+            color: var(--accent);
+            transform: scale(1.15) rotate(-8deg);
+        }
+        .feature-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 0.7rem;
+            color: var(--text);
+            text-align: center;
+        }
+        .feature-desc {
+            font-size: 1rem;
+            color: #666;
+            text-align: center;
+        }
+        [data-theme="dark"] .feature-desc {
+            color: #bbb;
+        }
+        /* How It Works */
+        .how-it-works {
+            padding: 4rem 2rem 2rem 2rem;
+            background: linear-gradient(120deg, #e0e7ff 60%, #f8f9fb 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        [data-theme="dark"] .how-it-works {
+            background: linear-gradient(120deg, #23263a 60%, #181a20 100%);
+        }
+        .steps {
+            display: flex;
+            gap: 2.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 2rem;
+            width: 100%;
+            max-width: 900px;
+        }
+        .step {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 2rem 1.2rem;
+            flex: 1 1 200px;
+            min-width: 200px;
+            max-width: 260px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            transition: transform var(--transition), box-shadow var(--transition);
+        }
+        .step-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            background: #fff;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(108,99,255,0.08);
+            margin-bottom: 1rem;
+        }
+        .step-icon {
+            font-size: 2rem;
+            color: var(--accent);
+            margin-bottom: 0.7rem;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0);}
+            50% { transform: translateY(-8px);}
+        }
+        .step-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+            text-align: center;
+        }
+        .step-desc {
+            font-size: 0.98rem;
+            color: #666;
+            text-align: center;
+        }
+        [data-theme="dark"] .step-desc {
+            color: #bbb;
+        }
+        /* Screenshots Gallery */
+        .screenshots {
+            padding: 4rem 2rem 2rem 2rem;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .swiper {
+            width: 100%;
+            max-width: 900px;
+            margin-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .swiper-slide {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            transition: transform 0.4s cubic-bezier(.4,0,.2,1);
+            opacity: 0.85;
+        }
+        .swiper-slide-active {
+            transform: scale(1.08);
+            opacity: 1;
+            z-index: 2;
+        }
+        .screenshot-img {
+            width: 220px;
+            height: 440px;
+            border-radius: 2rem;
+            box-shadow: 0 8px 32px rgba(108,99,255,0.13);
+            object-fit: cover;
+            margin-bottom: 1rem;
+            background: #e0e7ff;
+            transition: box-shadow var(--transition), transform var(--transition);
+        }
+        .screenshot-label {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary);
+            text-align: center;
+        }
+        /* Testimonials */
+        .testimonials {
+            padding: 4rem 2rem 2rem 2rem;
+            background: linear-gradient(120deg, #e0e7ff 60%, #f8f9fb 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        [data-theme="dark"] .testimonials {
+            background: linear-gradient(120deg, #23263a 60%, #181a20 100%);
+        }
+        .testimonial-swiper {
+            width: 100%;
+            max-width: 700px;
+            margin-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .testimonial-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            min-width: 260px;
+            max-width: 350px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .testimonial-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 2px 8px rgba(108,99,255,0.08);
+        }
+        .testimonial-name {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+        .testimonial-rating {
+            color: #FFD700;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+        .testimonial-text {
+            font-size: 1rem;
+            color: #666;
+        }
+        [data-theme="dark"] .testimonial-text {
+            color: #bbb;
+        }
+        /* Pricing */
+        .pricing {
+            padding: 4rem 2rem 2rem 2rem;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .pricing-table {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 2rem;
+            width: 100%;
+            max-width: 800px;
+        }
+        .plan {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 2.5rem 2rem;
+            flex: 1 1 220px;
+            min-width: 220px;
+            max-width: 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            transition: transform var(--transition), box-shadow var(--transition);
+            border: 2px solid transparent;
+        }
+        .plan.best {
+            border: 2px solid var(--primary);
+            transform: scale(1.05);
+            box-shadow: 0 8px 32px rgba(108,99,255,0.13);
+            animation: pulse 1.5s infinite alternate;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 8px 32px rgba(108,99,255,0.13);}
+            100% { box-shadow: 0 12px 48px rgba(108,99,255,0.18);}
+        }
+        .plan-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 0.7rem;
+            color: var(--text);
+            text-align: center;
+        }
+        .plan-price {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        .plan-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 1.5rem 0;
+            color: #666;
+            font-size: 1rem;
+            text-align: center;
+        }
+        .plan-features li {
+            margin-bottom: 0.5rem;
+        }
+        .plan-btn {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 2rem;
+            padding: 0.7rem 1.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background var(--transition), transform var(--transition);
+            box-shadow: var(--shadow);
+            text-decoration: none;
+        }
+        .plan-btn:hover {
+            background: var(--accent);
+            transform: scale(1.04);
+        }
+        /* FAQ */
+        .faq {
+            padding: 4rem 2rem 2rem 2rem;
+            background: linear-gradient(120deg, #e0e7ff 60%, #f8f9fb 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        [data-theme="dark"] .faq {
+            background: linear-gradient(120deg, #23263a 60%, #181a20 100%);
+        }
+        .faq-list {
+            width: 100%;
+            max-width: 700px;
+            margin-top: 2rem;
+        }
+        .faq-item {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: box-shadow var(--transition);
+        }
+        .faq-question {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 1.2rem 1.5rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--primary);
+            transition: background var(--transition);
+            user-select: none;
+        }
+        .faq-question:hover {
+            background: #f3f4fa;
+        }
+        [data-theme="dark"] .faq-question:hover {
+            background: #23263a;
+        }
+        .faq-icon {
+            margin-right: 1rem;
+            font-size: 1.3rem;
+            transition: transform var(--transition);
+        }
+        .faq-item.open .faq-icon {
+            transform: rotate(90deg);
+        }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            background: var(--card-bg);
+            color: #666;
+            font-size: 1rem;
+            padding: 0 1.5rem;
+            transition: max-height 0.4s cubic-bezier(.4,0,.2,1), padding 0.4s cubic-bezier(.4,0,.2,1);
+        }
+        .faq-item.open .faq-answer {
+            max-height: 200px;
+            padding: 1rem 1.5rem 1.2rem 1.5rem;
+            color: #444;
+        }
+        [data-theme="dark"] .faq-item.open .faq-answer {
+            color: #bbb;
+        }
+        /* Footer */
+        footer {
+            background: var(--primary);
+            color: #fff;
+            padding: 3rem 2rem 2rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .footer-cta {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .footer-apps {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .footer-app-btn {
+            background: #fff;
+            color: var(--primary);
+            border: none;
+            border-radius: 2rem;
+            padding: 0.7rem 1.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 2px 8px rgba(108,99,255,0.08);
+            cursor: pointer;
+            text-decoration: none;
+            transition: background var(--transition), color var(--transition);
+        }
+        .footer-app-btn:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+        .newsletter {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .newsletter input[type="email"] {
+            padding: 0.7rem 1rem;
+            border-radius: 2rem;
+            border: none;
+            font-size: 1rem;
+            outline: none;
+            min-width: 200px;
+            box-shadow: 0 2px 8px rgba(108,99,255,0.08);
+        }
+        .newsletter button {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 2rem;
+            padding: 0.7rem 1.2rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+        .newsletter button:hover {
+            background: #fff;
+            color: var(--accent);
+        }
+        .footer-socials {
+            display: flex;
+            gap: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        .footer-socials a {
+            color: #fff;
+            font-size: 1.5rem;
+            transition: color var(--transition), transform var(--transition);
+            opacity: 0.85;
+        }
+        .footer-socials a:hover {
+            color: var(--accent);
+            transform: scale(1.15);
+            opacity: 1;
+        }
+        .footer-copy {
+            font-size: 0.98rem;
+            color: #e0e7ff;
+            margin-top: 1rem;
+            text-align: center;
+        }
+        /* Responsive */
+        @media (max-width: 1100px) {
+            .feature-cards, .steps, .pricing-table {
+                flex-direction: column;
+                align-items: center;
+            }
+            .feature-card, .step, .plan {
+                max-width: 400px;
+                width: 100%;
+            }
+        }
+        @media (max-width: 900px) {
+            .hero {
+                flex-direction: column-reverse;
+                padding: 2rem 1rem 1rem 1rem;
+                min-height: 70vh;
+            }
+            .hero-content, .hero-mockup {
+                max-width: 100%;
+                min-width: 0;
+            }
+            .hero-bg-anim {
+                width: 100vw;
+                height: 60vw;
+                top: auto;
+                bottom: 0;
+            }
+        }
+        @media (max-width: 600px) {
+            nav {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem 1rem;
+            }
+            .nav-links {
+                gap: 1rem;
+            }
+            .hero-title {
+                font-size: 2rem;
+            }
+            .section-title {
+                font-size: 1.4rem;
+            }
+            .phone-mockup {
+                width: 180px;
+                height: 360px;
+            }
+            .screenshot-img {
+                width: 120px;
+                height: 240px;
+            }
+            .swiper, .testimonial-swiper {
+                max-width: 98vw;
+            }
+            .feature-card, .step, .plan {
+                padding: 1.2rem 0.7rem;
+            }
+            .faq-question {
+                font-size: 1rem;
+                padding: 1rem 1rem;
+            }
+            .faq-answer {
+                font-size: 0.95rem;
+                padding: 0 1rem;
+            }
+            .footer-app-btn, .newsletter input[type="email"], .newsletter button {
+                font-size: 0.95rem;
+                padding: 0.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav>
+        <div class="logo">
+            <img src="https://img.icons8.com/color/48/000000/heart-with-pulse.png" alt="PulseTrack Logo">
+            PulseTrack
+        </div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#how">How It Works</a>
+            <a href="#screenshots">Screenshots</a>
+            <a href="#testimonials">Testimonials</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#faq">FAQ</a>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
+        </div>
+    </nav>
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content" data-aos="fade-right">
+            <div class="hero-title">PulseTrack</div>
+            <div class="hero-tagline">Fitness in Your Pocket</div>
+            <div class="hero-desc">
+                PulseTrack is your smart companion for fitness & wellness. Track steps, monitor heart rate, set goals, and get real-time insights — all in a beautiful, easy-to-use app.
+            </div>
+            <div class="cta-buttons">
+                <a href="#" class="cta-btn" aria-label="Download on App Store">
+                    <img src="https://img.icons8.com/ios-filled/24/ffffff/mac-os.png" alt="App Store" style="width:22px;"> Download on App Store
+                </a>
+                <a href="#" class="cta-btn secondary" aria-label="Get it on Google Play">
+                    <img src="https://img.icons8.com/ios-filled/24/ffffff/google-play.png" alt="Google Play" style="width:22px;"> Get it on Google Play
+                </a>
+            </div>
+        </div>
+        <div class="hero-mockup" data-aos="fade-left">
+            <div class="phone-mockup">
+                <img src="app.png" alt="PulseTrack App Screenshot">
+            </div>
+        </div>
+        <!-- Animated SVG Blobs -->
+        <svg class="hero-bg-anim" viewBox="0 0 700 700" fill="none">
+            <ellipse cx="500" cy="200" rx="180" ry="120" fill="#6C63FF" fill-opacity="0.18">
+                <animate attributeName="cx" values="500;520;500" dur="7s" repeatCount="indefinite"/>
+                <animate attributeName="ry" values="120;140;120" dur="6s" repeatCount="indefinite"/>
+            </ellipse>
+            <ellipse cx="600" cy="400" rx="120" ry="80" fill="#FF6584" fill-opacity="0.13">
+                <animate attributeName="cy" values="400;420;400" dur="8s" repeatCount="indefinite"/>
+                <animate attributeName="rx" values="120;140;120" dur="7s" repeatCount="indefinite"/>
+            </ellipse>
+            <ellipse cx="400" cy="500" rx="90" ry="60" fill="#6C63FF" fill-opacity="0.10">
+                <animate attributeName="cx" values="400;420;400" dur="6s" repeatCount="indefinite"/>
+                <animate attributeName="ry" values="60;80;60" dur="5s" repeatCount="indefinite"/>
+            </ellipse>
+        </svg>
+    </section>
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="section-title" data-aos="fade-up">App Features</div>
+        <div class="feature-cards">
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-icon">👣</div>
+                <div class="feature-title">Step Tracking</div>
+                <div class="feature-desc">Accurately count your steps and distance with real-time stats and daily goals.</div>
+            </div>
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-icon">❤️</div>
+                <div class="feature-title">Heart Rate Monitor</div>
+                <div class="feature-desc">Monitor your heart rate trends and get instant alerts for unusual activity.</div>
+            </div>
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-icon">🎯</div>
+                <div class="feature-title">Goal Alerts</div>
+                <div class="feature-desc">Set custom fitness goals and receive motivational alerts as you progress.</div>
+            </div>
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
+                <div class="feature-icon">📊</div>
+                <div class="feature-title">Analytics Dashboard</div>
+                <div class="feature-desc">Visualize your activity, calories, and trends with beautiful charts.</div>
+            </div>
+        </div>
+    </section>
+    <!-- How It Works -->
+    <section class="how-it-works" id="how">
+        <div class="section-title" data-aos="fade-up">How It Works</div>
+        <div class="steps">
+            <div class="step" data-aos="fade-up" data-aos-delay="100">
+                <div class="step-number">1</div>
+                <div class="step-icon">⬇️</div>
+                <div class="step-title">Download</div>
+                <div class="step-desc">Get PulseTrack from the App Store or Google Play and install in seconds.</div>
+            </div>
+            <div class="step" data-aos="fade-up" data-aos-delay="200">
+                <div class="step-number">2</div>
+                <div class="step-icon">📱</div>
+                <div class="step-title">Track</div>
+                <div class="step-desc">Start tracking your steps, heart rate, and goals automatically.</div>
+            </div>
+            <div class="step" data-aos="fade-up" data-aos-delay="300">
+                <div class="step-number">3</div>
+                <div class="step-icon">🚀</div>
+                <div class="step-title">Improve</div>
+                <div class="step-desc">See your progress, get insights, and reach your fitness goals faster.</div>
+            </div>
+        </div>
+    </section>
+    <!-- Screenshots Gallery -->
+    <section class="screenshots" id="screenshots">
+        <div class="section-title" data-aos="fade-up">Screenshots Gallery</div>
+        <div class="swiper" id="screenshotSwiper">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide" data-aos="fade-up" data-aos-delay="100">
+                    <img class="screenshot-img" src="https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=400&q=80" alt="Home Screenshot">
+                    <div class="screenshot-label">Home</div>
+                </div>
+                <div class="swiper-slide" data-aos="fade-up" data-aos-delay="200">
+                    <img class="screenshot-img" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" alt="Analytics Screenshot">
+                    <div class="screenshot-label">Analytics</div>
+                </div>
+                <div class="swiper-slide" data-aos="fade-up" data-aos-delay="300">
+                    <img class="screenshot-img" src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80" alt="Goals Screenshot">
+                    <div class="screenshot-label">Goals</div>
+                </div>
+                <div class="swiper-slide" data-aos="fade-up" data-aos-delay="400">
+                    <img class="screenshot-img" src="https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=400&q=80" alt="Profile Screenshot">
+                    <div class="screenshot-label">Profile</div>
+                </div>
+            </div>
+            <!-- Add Pagination -->
+            <div class="swiper-pagination"></div>
+        </div>
+    </section>
+    <!-- Testimonials -->
+    <section class="testimonials" id="testimonials">
+        <div class="section-title" data-aos="fade-up">What Users Say</div>
+        <div class="testimonial-swiper" id="testimonialSwiper">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide" data-aos="fade-up" data-aos-delay="100">
+                    <div class="testimonial-card">
+                        <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/women/44.jpg" alt="User 1">
+                        <div class="testimonial-name">Emily R.</div>
+                        <div class="testimonial-rating">★★★★★</div>
+                        <div class="testimonial-text">PulseTrack keeps me motivated every day! The analytics are beautiful and easy to understand.</div>
+                    </div>
+                </div>
+                <div class="swiper-slide" data-aos="fade-up" data-aos-delay="200">
+                    <div class="testimonial-card">
+                        <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/men/32.jpg" alt="User 2">
+                        <div class="testimonial-name">James K.</div>
+                        <div class="testimonial-rating">★★★★★</div>
+                        <div class="testimonial-text">Love the heart rate monitor and goal alerts. It’s like having a personal coach in my pocket!</div>
+                    </div>
+                </div>
+                <div class="swiper-slide" data-aos="fade-up" data-aos-delay="300">
+                    <div class="testimonial-card">
+                        <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/women/68.jpg" alt="User 3">
+                        <div class="testimonial-name">Sophia L.</div>
+                        <div class="testimonial-rating">★★★★★</div>
+                        <div class="testimonial-text">The best fitness app I’ve tried. The UI is gorgeous and the features are spot on.</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Add Pagination -->
+            <div class="swiper-pagination"></div>
+        </div>
+    </section>
+    <!-- Pricing -->
+    <section class="pricing" id="pricing">
+        <div class="section-title" data-aos="fade-up">Pricing</div>
+        <div class="pricing-table">
+            <div class="plan" data-aos="fade-up" data-aos-delay="100">
+                <div class="plan-title">Free</div>
+                <div class="plan-price">$0</div>
+                <ul class="plan-features">
+                    <li>Step & Heart Rate Tracking</li>
+                    <li>Basic Analytics</li>
+                    <li>Goal Alerts</li>
+                </ul>
+                <a href="#" class="plan-btn">Get Started</a>
+            </div>
+            <div class="plan best" data-aos="fade-up" data-aos-delay="200">
+                <div class="plan-title">Premium</div>
+                <div class="plan-price">$4.99<span style="font-size:1rem;font-weight:400;">/mo</span></div>
+                <ul class="plan-features">
+                    <li>All Free Features</li>
+                    <li>Advanced Analytics</li>
+                    <li>Personalized Insights</li>
+                    <li>Priority Support</li>
+                </ul>
+                <a href="#" class="plan-btn">Try Premium</a>
+            </div>
+        </div>
+    </section>
+    <!-- FAQ -->
+    <section class="faq" id="faq">
+        <div class="section-title" data-aos="fade-up">Frequently Asked Questions</div>
+        <div class="faq-list">
+            <div class="faq-item" data-aos="fade-up" data-aos-delay="100">
+                <div class="faq-question"><span class="faq-icon">➕</span>Is PulseTrack free to use?</div>
+                <div class="faq-answer">Yes! PulseTrack offers a free plan with core features. Upgrade to Premium for advanced analytics and insights.</div>
+            </div>
+            <div class="faq-item" data-aos="fade-up" data-aos-delay="200">
+                <div class="faq-question"><span class="faq-icon">➕</span>Does it work with my smartwatch?</div>
+                <div class="faq-answer">PulseTrack syncs with most popular smartwatches and fitness trackers for seamless data integration.</div>
+            </div>
+            <div class="faq-item" data-aos="fade-up" data-aos-delay="300">
+                <div class="faq-question"><span class="faq-icon">➕</span>Is my data private and secure?</div>
+                <div class="faq-answer">Absolutely. Your health data is encrypted and never shared without your consent.</div>
+            </div>
+            <div class="faq-item" data-aos="fade-up" data-aos-delay="400">
+                <div class="faq-question"><span class="faq-icon">➕</span>How do I contact support?</div>
+                <div class="faq-answer">You can reach our support team anytime via the in-app chat or email at support@pulsetrack.com.</div>
+            </div>
+        </div>
+    </section>
+    <!-- Footer -->
+    <footer>
+        <div class="footer-cta">
+            <div class="footer-apps">
+                <a href="#" class="footer-app-btn" aria-label="Download on App Store">
+                    <img src="https://img.icons8.com/ios-filled/24/6C63FF/mac-os.png" alt="App Store" style="width:22px;"> App Store
+                </a>
+                <a href="#" class="footer-app-btn" aria-label="Get it on Google Play">
+                    <img src="https://img.icons8.com/ios-filled/24/6C63FF/google-play.png" alt="Google Play" style="width:22px;"> Google Play
+                </a>
+            </div>
+            <form class="newsletter" onsubmit="event.preventDefault();alert('Thank you for subscribing!');">
+                <input type="email" placeholder="Your email" required>
+                <button type="submit">Notify Me</button>
+            </form>
+            <div class="footer-socials">
+                <a href="#" aria-label="Twitter"><img src="https://img.icons8.com/ios-filled/28/ffffff/twitter.png" alt="Twitter" style="width:24px;"></a>
+                <a href="#" aria-label="Instagram"><img src="https://img.icons8.com/ios-filled/28/ffffff/instagram-new.png" alt="Instagram" style="width:24px;"></a>
+                <a href="#" aria-label="Facebook"><img src="https://img.icons8.com/ios-filled/28/ffffff/facebook-new.png" alt="Facebook" style="width:24px;"></a>
+            </div>
+        </div>
+        <div class="footer-copy">
+            &copy; 2024 PulseTrack. All rights reserved.
+        </div>
+    </footer>
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script>
+        // AOS init
+        AOS.init({
+            duration: 900,
+            once: true,
+            offset: 80,
+        });
+
+        // Swiper for screenshots
+        new Swiper('#screenshotSwiper', {
+            slidesPerView: 1.2,
+            spaceBetween: 30,
+            centeredSlides: true,
+            loop: true,
+            pagination: { el: '.swiper-pagination', clickable: true },
+            breakpoints: {
+                600: { slidesPerView: 2.2 },
+                900: { slidesPerView: 3.2 }
+            }
+        });
+
+        // Swiper for testimonials
+        new Swiper('#testimonialSwiper', {
+            slidesPerView: 1,
+            spaceBetween: 30,
+            loop: true,
+            pagination: { el: '.swiper-pagination', clickable: true },
+            autoplay: { delay: 5000 }
+        });
+
+        // FAQ Accordion
+        document.querySelectorAll('.faq-question').forEach(q => {
+            q.addEventListener('click', function() {
+                const item = this.parentElement;
+                item.classList.toggle('open');
+                document.querySelectorAll('.faq-item').forEach(other => {
+                    if (other !== item) other.classList.remove('open');
+                });
+            });
+        });
+
+        // Smooth scroll for nav links
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href.startsWith('#')) {
+                    e.preventDefault();
+                    document.querySelector(href).scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Dark/Light mode toggle
+        const themeToggle = document.getElementById('themeToggle');
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+            localStorage.setItem('theme', theme);
+        }
+        themeToggle.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            setTheme(current === 'light' ? 'dark' : 'light');
+        });
+        // Init theme
+        (function() {
+            const saved = localStorage.getItem('theme');
+            if (saved) setTheme(saved);
+        })();
+    </script>
+</body>
+</html>
